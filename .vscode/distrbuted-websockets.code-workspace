@@ -1,0 +1,47 @@
+{
+	"folders": [
+		{
+			"path": "../client"
+		},
+		{
+			"path": "../edge-server"
+		},
+		{
+			"path": "../edge-router"
+		},
+		{
+			"path": "../server"
+		},
+		{
+			"path": "../router"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"javascript.preferences.quoteStyle": "single",
+		"typescript.preferences.quoteStyle": "single",
+		"yaml.format.singleQuote": true,
+		"prettier.jsxSingleQuote": true,
+		"prettier.singleQuote": true
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Attach by Process ID",
+				"processId": "${command:PickProcess}",
+				"request": "attach",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				"port": 9999,
+				"type": "node"
+			}
+		],
+		"compounds": []
+	}
+}

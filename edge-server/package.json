@@ -1,0 +1,20 @@
+{
+  "name": "distrbuted-websockets-edge-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "http": "^0.0.1-security",
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
+    "ws": "^8.17.1"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "distrbuted-websockets-router",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
