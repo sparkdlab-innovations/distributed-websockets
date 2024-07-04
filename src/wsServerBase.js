@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 
-class WSEdgeServer {
+class WSServerBase {
   #server;
   #wss;
   #clients;
@@ -131,4 +131,4 @@ class WSEdgeServer {
   }
 }
 
-export default WSEdgeServer;
+export default WSServerBase;
