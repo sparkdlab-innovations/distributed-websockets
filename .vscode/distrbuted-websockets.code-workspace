@@ -1,21 +1,6 @@
 {
 	"folders": [
 		{
-			"path": "../client"
-		},
-		{
-			"path": "../edge-server"
-		},
-		{
-			"path": "../edge-router"
-		},
-		{
-			"path": "../server"
-		},
-		{
-			"path": "../router"
-		},
-		{
 			"path": ".."
 		}
 	],
