@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 
-class WSClient {
+class WSClientBase {
   #ws;
   #clientId;
   #pingTimeout;
@@ -148,4 +148,4 @@ class WSClient {
   }
 }
 
-export default WSClient;
+export default WSClientBase;
