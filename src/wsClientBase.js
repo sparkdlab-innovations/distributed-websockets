@@ -3,15 +3,18 @@ import WebSocket from 'ws';
 class WSClientBase {
   #ws;
   #clientId;
+
   #pingTimeout;
   #serverPingInterval;
+
   #readyStateFutureResolver;
 
   constructor(
     clientId,
     { onOpen, onMessage, onClose, onError, onUnexpectedResponse } = {},
-    { serverPingInterval } = {
+    { serverPingInterval, port } = {
       serverPingInterval: 30000,
+      port: 8080,
     }
   ) {
     this.#clientId = clientId;
@@ -23,7 +26,7 @@ class WSClientBase {
 
     // TODO: get address of local websocket edge server
     try {
-      this.#ws = new WebSocket('ws://localhost:8080/ws', {
+      this.#ws = new WebSocket(`ws://localhost:${parseInt(port)}/ws`, {
         headers: {
           'X-Client-ID': this.#clientId,
         },
@@ -61,14 +64,10 @@ class WSClientBase {
 
       if (sender === 'server') {
         if (data.isError) {
-          // TODO: handle errors
           onError?.(data.error);
         }
-        if (data.isWarning) {
-          // TODO: handle warnings
-        }
         if (data.isInfo) {
-          // TODO: handle info
+          // TODO: handle server address switches, etc
         }
         return;
       }
