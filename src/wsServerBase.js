@@ -6,7 +6,12 @@ class WSServerBase {
   #wss;
   #clients;
 
-  constructor() {
+  constructor(
+    { onConnection, onMessage, onClose, onError } = {},
+    { serverPingInterval } = {
+      serverPingInterval: 30000,
+    }
+  ) {
     this.#server = createServer();
 
     this.#wss = new WebSocketServer({
@@ -27,55 +32,31 @@ class WSServerBase {
       });
 
       ws.on('message', (message) => {
-        console.log(`Client ${ws.clientId} | Received: ${message}`);
-
         const { recipient, data } = JSON.parse(message);
-        const recipientClient = this.#clients.get(recipient);
 
-        // TODO: handle case to pass to parent router
-
-        if (recipientClient) {
-          recipientClient.send(
-            JSON.stringify({ sender: ws.clientId, recipient, data })
-          );
-        } else {
-          ws.send(
-            JSON.stringify({
-              sender: 'server',
-              recipient: ws.clientId,
-              data: {
-                isError: true,
-                error: {
-                  message: `Recipient ${recipient} not found!`,
-                  code: 'recipient-not-found',
-                },
-              },
-            })
-          );
+        try {
+          onMessage?.(ws, recipient, data);
+        } catch (error) {
+          throw new Error('event-callback-error', error);
         }
       });
 
       ws.on('close', () => {
         this.#clients.delete(ws.clientId);
         clearInterval(ws.pingInterval);
+
+        try {
+          onClose?.(ws);
+        } catch (error) {
+          throw new Error('event-callback-error', error);
+        }
       });
 
       ws.on('error', (error) => {
-        console.error(`Client ${ws.clientId} | Error: `, error);
-        if (ws.readyState === ws.OPEN) {
-          ws.send(
-            JSON.stringify({
-              sender: 'server',
-              recipient: ws.clientId,
-              data: {
-                isError: true,
-                error: {
-                  message: error.message,
-                  code: 'unknown-socket-error',
-                },
-              },
-            })
-          );
+        try {
+          onError?.(ws, error);
+        } catch (error) {
+          throw new Error('event-callback-error', error);
         }
       });
 
@@ -86,7 +67,13 @@ class WSServerBase {
 
         ws.isAlive = false;
         ws.ping();
-      }, 30000);
+      }, serverPingInterval);
+
+      try {
+        onConnection?.(ws);
+      } catch (error) {
+        throw new Error('event-callback-error', error);
+      }
     });
 
     this.#wss.on('error', console.error);
@@ -100,15 +87,19 @@ class WSServerBase {
     this.#server.on('error', console.error);
   }
 
-  start() {
-    this.#server.listen(8080, () => {
-      console.info('Server listening on 8080!');
+  start(port) {
+    this.#server.listen(parseInt(port), () => {
+      console.info(`Server listening on ${port}!`);
     });
 
     setInterval(() => {
-      console.log(
+      console.debug(
         'Clients:',
         Array.from(this.#wss.clients).map((client) => client.clientId)
+      );
+      console.debug(
+        'Process Memory (MB): ',
+        process.memoryUsage().rss / 1024 / 1024
       );
     }, 30000);
   }
